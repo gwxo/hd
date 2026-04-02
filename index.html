@@ -116,7 +116,7 @@ video { width:100%; height:100%; object-fit:contain; outline: none; }
 </div>
 
 <!-- 🔥 ONLY SCRIPT PART UPDATED -->
-<script>
+        <script>
 (function(){
 
   // --- 1. SECURITY (UNCHANGED) ---
@@ -132,7 +132,7 @@ video { width:100%; height:100%; object-fit:contain; outline: none; }
       }
   });
 
-  // 🔥 YOUR WORKER API
+  // 🔥 YOUR API
   const API = "https://apiscrape.codewithprashant07.workers.dev/";
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -150,7 +150,11 @@ video { width:100%; height:100%; object-fit:contain; outline: none; }
     ui.configure({
       addBigPlayButton: true,
       controlPanelElements: ["play_pause", "mute", "volume", "spacer", "quality", "fullscreen"],
-      seekBarColors: { base: "rgba(255,255,255,0.15)", buffered: "rgba(255,255,255,0.3)", played: "#FF0000" }
+      seekBarColors: {
+        base: "rgba(255,255,255,0.15)",
+        buffered: "rgba(255,255,255,0.3)",
+        played: "#FF0000"
+      }
     });
 
     player.configure({
@@ -181,7 +185,7 @@ video { width:100%; height:100%; object-fit:contain; outline: none; }
           drm: { clearKeys: { [CONFIG.keyId]: CONFIG.key } }
         });
 
-        // --- COOKIE FETCH ---
+        // 🍪 COOKIE
         let cookieValue = "";
         try {
           const response = await fetch(CONFIG.cookieUrl + "?t=" + Date.now());
@@ -189,7 +193,6 @@ video { width:100%; height:100%; object-fit:contain; outline: none; }
           cookieValue = data.cookie || "";
         } catch(e){}
 
-        // --- REQUEST FILTER ---
         if (cookieValue) {
           player.getNetworkingEngine().clearAllRequestFilters();
 
@@ -214,7 +217,6 @@ video { width:100%; height:100%; object-fit:contain; outline: none; }
           });
         }
 
-        // ▶ LOAD
         await player.load(CONFIG.streamUrl);
         video.play().catch(()=>{});
 
@@ -228,10 +230,30 @@ video { width:100%; height:100%; object-fit:contain; outline: none; }
     // ▶ FIRST LOAD
     await loadStream();
 
-    // 🔁 AUTO UPDATE (15 sec)
+    // 🔁 CHECK EVERY 15 SEC (NO UI CHANGE, NO LAG)
     setInterval(loadStream, 15000);
 
-    video.addEventListener("play", () => { video.muted = false; });
+    video.addEventListener("play", () => {
+      video.muted = false;
+    });
+
+    // ⏰ AUTO REFRESH AT 7:05 PM (ONCE)
+    function refreshAt705PM() {
+      const now = new Date();
+
+      const target = new Date();
+      target.setHours(19, 5, 0, 0);
+
+      if (now > target) return;
+
+      const timeLeft = target - now;
+
+      setTimeout(() => {
+        location.reload();
+      }, timeLeft);
+    }
+
+    refreshAt705PM();
 
   });
 
